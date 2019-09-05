@@ -213,7 +213,7 @@ if __name__ == "__main__":
     
     # Low pass filter
     order = 5
-    cutoff = 1
+    cutoff = 100
     lpFiltered = run_lowpass_filter(order=order, fs=fs, cutoff=cutoff, Xdata=timeData, Ydata=voltageData,\
         xM_tick=fs*5, xm_tick=fs)
     
