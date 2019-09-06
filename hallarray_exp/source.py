@@ -22,6 +22,16 @@ data10Data = [] # temp (deprecated)
 data11Data = [] # temp (deprecated)
 data12Data = [] # temp (deprecated)
 data13Data = [] # temp (deprecated)
+hallData = []
+
+coeff_matrix = [
+    [4.9139e3,   -1.3941e3,   -0.2682e3,   -0.1720e3,   -0.0949e3,   -0.1485e3],
+   [-3.4375e3,    5.6612e3,   -0.9794e3,   -0.1594e3,  -0.0763e3,   -0.0875e3],
+    [1.2155e3,   -3.5242e3,    5.6534e3,   -1.1425e3,   -0.2120e3,   -0.1898e3],
+   [-0.8416e3,    1.6780e3,  -4.2991e3,    5.6978e3,  -0.8802e3,   -0.2511e3],
+    [0.3409e3,   -1.0833e3,    2.0590e3,   -3.9891e3,    5.5089e3,   -1.1651e3],
+   [-0.2400e3,   0.3329e3,   -1.0053e3,    1.4199e3,   -3.2652e3,    4.7195e3],
+]
 
 def plotLine(xArr, yArr, xLabel, yLabel, title, *args):
     argsList = []
@@ -35,6 +45,26 @@ def plotLine(xArr, yArr, xLabel, yLabel, title, *args):
     plt.title(title)
     plt.grid()
     plt.show()
+    
+def plotMultiLine(xArr, *args):
+    strList = []
+    dataList = []
+    for arg in args:
+        if type(arg) == str:
+            strList.append(arg)
+        elif type(arg) == list:
+            dataList.append(arg)
+    _fig, ax = plt.subplots()
+    try:
+        ax.set_xlabel(strList[0])
+        ax.set_ylabel(strList[1])
+        plt.title(strList[2])
+    except IndexError:
+        pass
+    for yArr in dataList:
+        ax.plot(xArr, yArr)
+    plt.grid()
+    plt.show()    
 
 def fileLoad():
     relPath = "./"+dataFolderName
@@ -108,18 +138,26 @@ def fileLoad():
             pass 
     return file_name
 
-#if __name__ is "__main__":
-fileLoad()
-plotLine(timeData, data1Data, "time [s]", ' ', "Data1")
-plotLine(timeData, data2Data, "time [s]", ' ', "Data2")
-plotLine(timeData, data3Data, "time [s]", ' ', "Data3")
-plotLine(timeData, data4Data, "time [s]", ' ', "Data4")
-plotLine(timeData, data5Data, "time [s]", ' ', "Data5")
-plotLine(timeData, data6Data, "time [s]", ' ', "Data6")
-plotLine(timeData, data7Data, "time [s]", ' ', "Data7")
-plotLine(timeData, data8Data, "time [s]", ' ', "Data8")
-plotLine(timeData, data9Data, "time [s]", ' ', "Data9")
-plotLine(timeData, data10Data, "time [s]", ' ', "Data10")
-plotLine(timeData, data11Data, "time [s]", ' ', "Data11")
-plotLine(timeData, data12Data, "time [s]", ' ', "Data12")
-plotLine(timeData, data13Data, "time [s]", ' ', "Data13")
+def hall_rearange():
+    for idx  in range(len(data8Data)):
+        temp = []
+        temp.append(data8Data[idx]) # hall? u1
+        temp.append(data4Data[idx]) # hall? u2
+        temp.append(data5Data[idx]) # hall? u4
+        temp.append(data6Data[idx]) # hall? u5
+        temp.append(data7Data[idx]) # hall? u6
+        hallData.append(temp)
+
+if __name__ == "__main__":
+    fileLoad()
+    hall_rearange()
+    #plotLine(timeData, data1Data, "time [s]", ' ', "Data1")
+    plotLine(timeData, data2Data, "time [s]", ' ', "Data2")
+    #plotLine(timeData, data3Data, "time [s]", ' ', "Data3")
+    plotLine(timeData, data4Data, "time [s]", ' ', "Data4")
+    plotLine(timeData, data5Data, "time [s]", ' ', "Data5")
+    plotLine(timeData, data6Data, "time [s]", ' ', "Data6")
+    plotLine(timeData, data7Data, "time [s]", ' ', "Data7")
+    plotLine(timeData, data8Data, "time [s]", ' ', "Data8")
+    
+    plotMultiLine(timeData, data4Data, data5Data, data6Data, data7Data, data8Data)
