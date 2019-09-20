@@ -23,15 +23,20 @@ data11Data = [] # temp (deprecated)
 data12Data = [] # temp (deprecated)
 data13Data = [] # temp (deprecated)
 hallData = []
-
+meshI1 = []
+meshI2 = []
+meshI3 = []
+meshI4 = []
+meshI5 = []
 coeff_matrix = [
-    [4.9139e3,   -1.3941e3,   -0.2682e3,   -0.1720e3,   -0.0949e3,   -0.1485e3],
-   [-3.4375e3,    5.6612e3,   -0.9794e3,   -0.1594e3,  -0.0763e3,   -0.0875e3],
-    [1.2155e3,   -3.5242e3,    5.6534e3,   -1.1425e3,   -0.2120e3,   -0.1898e3],
-   [-0.8416e3,    1.6780e3,  -4.2991e3,    5.6978e3,  -0.8802e3,   -0.2511e3],
-    [0.3409e3,   -1.0833e3,    2.0590e3,   -3.9891e3,    5.5089e3,   -1.1651e3],
-   [-0.2400e3,   0.3329e3,   -1.0053e3,    1.4199e3,   -3.2652e3,    4.7195e3],
+[0.000270214471229482,0.0000807586376188975,0.0000439701000562218,0.0000303100748452958,0.0000231034113176958],
+[0.000226660339850649,0.000267610484317059,0.0000714627156302221,0.0000410934140857493,0.0000288892983682616],
+[0.0000469766856825697,0.0000923085238440956,0.000265139039369246,0.000129042608281353,0.0000544388573082632],
+[0.0000333463398814744,.0000507815416448289,0.000108927613438887,0.000263359903011763,0.000106018215255542],
+[0.0000258660273892805,0.0000352359162939813,0.0000552482075045511,0.000133483147049729,0.000265696001265904]
 ]
+inv_coeff = np.linalg.inv(coeff_matrix)
+print(inv_coeff)
 
 def plotLine(xArr, yArr, xLabel, yLabel, title, *args):
     argsList = []
@@ -137,27 +142,93 @@ def fileLoad():
             print('\n' + "!!!!Input Error!!!!" + '\n')
             pass 
     return file_name
-
+def mean_fix(strIdx, mIdx, endIdx, dataList):
+    mean = 0
+    for idx in range(strIdx, mIdx, 1):
+        mean = mean + dataList[idx] 
+    mean = mean / (mIdx-strIdx)
+    for idx in range(strIdx, endIdx, 1):
+        dataList[idx] = dataList[idx] - mean
+        
 def hall_rearange():
     for idx  in range(len(data8Data)):
-        temp = []
-        temp.append(data8Data[idx]) # hall? u1
-        temp.append(data4Data[idx]) # hall? u2
-        temp.append(data5Data[idx]) # hall? u4
-        temp.append(data6Data[idx]) # hall? u5
-        temp.append(data7Data[idx]) # hall? u6
-        hallData.append(temp)
+        if idx < 2300:
+            data4Data[idx] = 0# hall? u2
+            data5Data[idx] = 0# hall? u4
+            data6Data[idx] = 0# hall? u5
+            data7Data[idx] = 0# hall? u6
+            data8Data[idx] = 0# hall? u1
+        elif idx > 5740:
+            data4Data[idx] = 0# hall? u2
+            data5Data[idx] = 0# hall? u4
+            data6Data[idx] = 0# hall? u5
+            data7Data[idx] = 0# hall? u6
+            data8Data[idx] = 0# hall? u1
+        else:
+            pass
+    mean_fix(2300, 2347, 3617, data8Data)
+    mean_fix(3617, 3626, 4361, data8Data)
+    mean_fix(4361, 5286, 5740, data8Data)
+    
+    mean_fix(2300, 2330, 3617, data4Data)
+    mean_fix(3617, 3626, 4361, data4Data)
+    mean_fix(4361, 5286, 5740, data4Data)
+    
+    mean_fix(2300, 2330, 3617, data5Data)
+    mean_fix(3617, 3626, 4361, data5Data)
+    mean_fix(4361, 5286, 5740, data5Data)
+    
+    mean_fix(2300, 2330, 3617, data6Data)
+    mean_fix(3617, 3626, 4361, data6Data)
+    mean_fix(4361, 5286, 5740, data6Data)
 
+    mean_fix(2300, 2330, 3617, data7Data)
+    mean_fix(3617, 3626, 4361, data7Data)
+    mean_fix(4361, 5286, 5740, data7Data)
+    '''
+    mean_fix(strIdx, mIdx, endIdx, data5Data)
+    mean_fix(strIdx, mIdx, endIdx, data5Data)
+    mean_fix(strIdx, mIdx, endIdx, data5Data)
+    
+    mean_fix(strIdx, mIdx, endIdx, data6Data)
+    mean_fix(strIdx, mIdx, endIdx, data6Data)
+    mean_fix(strIdx, mIdx, endIdx, data6Data)
+    
+    mean_fix(strIdx, mIdx, endIdx, data7Data)
+    mean_fix(strIdx, mIdx, endIdx, data7Data)
+    mean_fix(strIdx, mIdx, endIdx, data7Data)
+    '''
+
+def inverse_calc():
+
+    for idx in range(len(data8Data)):
+        hall = [data8Data[idx],data4Data[idx],data5Data[idx],data6Data[idx],data7Data[idx]] 
+        temp = np.matmul(inv_coeff, hall)
+        meshI1.append(temp[0])
+        meshI2.append(temp[1])
+        meshI3.append(temp[2])
+        meshI4.append(temp[3])
+        meshI5.append(temp[4])
 if __name__ == "__main__":
     fileLoad()
-    hall_rearange()
-    #plotLine(timeData, data1Data, "time [s]", ' ', "Data1")
-    plotLine(timeData, data2Data, "time [s]", ' ', "Data2")
-    #plotLine(timeData, data3Data, "time [s]", ' ', "Data3")
-    plotLine(timeData, data4Data, "time [s]", ' ', "Data4")
-    plotLine(timeData, data5Data, "time [s]", ' ', "Data5")
-    plotLine(timeData, data6Data, "time [s]", ' ', "Data6")
-    plotLine(timeData, data7Data, "time [s]", ' ', "Data7")
-    plotLine(timeData, data8Data, "time [s]", ' ', "Data8")
     
-    plotMultiLine(timeData, data4Data, data5Data, data6Data, data7Data, data8Data)
+    #plotLine(timeData, data1Data, "time [s]", ' ', "Command Ampere")
+    
+    plotLine(timeData, data2Data, "time [s]", ' ', "Shunt Voltage")
+    plotLine(timeData, data3Data, "time [s]", ' ', "Raw Coil Voltage")
+    #plotLine(timeData, data8Data, "time [s]", ' ', "Raw Hall1")
+    #plotLine(timeData, data4Data, "time [s]", ' ', "Raw Hall2")
+    #plotLine(timeData, data5Data, "time [s]", ' ', "Raw Hall4")
+    #plotLine(timeData, data6Data, "time [s]", ' ', "Raw Hall5")
+    #plotLine(timeData, data7Data, "time [s]", ' ', "Raw Hall6")
+    
+    hall_rearange()
+
+    #plotLine(timeData, data8Data, "time [s]", ' ', "Hall1")
+    #plotLine(timeData, data4Data, "time [s]", ' ', "Hall2")
+    #plotLine(timeData, data5Data, "time [s]", ' ', "Hall4")
+    #plotLine(timeData, data6Data, "time [s]", ' ', "Hall5")
+    #plotLine(timeData, data7Data, "time [s]", ' ', "Hall6")
+    #plotMultiLine(timeData, data4Data, data5Data, data6Data, data7Data, data8Data)
+    inverse_calc()
+    plotMultiLine(timeData, meshI1, meshI2, meshI3, meshI4, meshI5)
