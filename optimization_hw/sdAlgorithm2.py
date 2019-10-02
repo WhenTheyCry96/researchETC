@@ -27,6 +27,7 @@ def plotLine(xArr, yArr, xLabel, yLabel, title, *args):
     
 ratelist = [1e-5,1e-4,1e-3,1e-2,1e-1,1.5e-1, 1.7e-1,2e-1] # Learning rate
 iterlist22 = []
+
 for rate in ratelist: 
     next_x = random() # We start the search at x=6
     gamma = rate  # Step size multiplier
