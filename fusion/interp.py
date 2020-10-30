@@ -44,8 +44,14 @@ C, R1  = np.meshgrid(cnew,r1new)
 
 B_show = B_intop(C, R1)
 
-
-
+# save data into csv
+with open('Bm_c_r1.csv', mode='w') as csvfile:
+    csvf = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    csvf.writerow(['R1 [m]', 'C [m]', 'Bm [T]'])
+    for ri in r1new:
+        for ci in cnew:
+            csvf.writerow([ri, ci, B_intop(ci, ri)])
+    
 # matplotlib
 fig, ax = plt.subplots()
 cs = ax.contourf(C, R1, B_show,locator=ticker.LinearLocator())
